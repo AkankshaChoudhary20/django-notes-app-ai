@@ -2,7 +2,10 @@ import React from 'react'
 import { Link } from "react-router-dom";
 
 let getTitle = (note) => {
-    let title = note.body.split('\n')[0]
+    if (note.title) {
+        return note.title
+    }
+    let title = (note.body || '').split('\n')[0]
     if (title.length > 25) {
         title = title.slice(0, 25) + '...'
     }

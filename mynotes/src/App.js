@@ -8,6 +8,7 @@ import './App.css';
 import Header from './components/header';
 import NotesListPage from './pages/NotesListPage';
 import NotePage from './pages/NotePage';
+import AskPage from './pages/AskPage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path='/' element={ <NotesListPage/> } />
           <Route path='/note/:id' element={ <NotePage/> } />
+          <Route path='/ask' element={ <AskPage/> } />
         </Routes>
         </div>
       </div>
