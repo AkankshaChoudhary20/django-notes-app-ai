@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import NoteSerializer
@@ -51,31 +51,31 @@ def getNotes(request):
 
 @api_view(['GET'])
 def getNote(request, pk):
-    note = Note.objects.get(id=pk)
+    note = get_object_or_404(Note, id=pk)
     serializer = NoteSerializer(note, many=False)
     return Response(serializer.data)
 
 @api_view(['PUT'])
 def updateNote(request, pk):
-    note = Note.objects.get(id=pk)
+    note = get_object_or_404(Note, id=pk)
     serializer = NoteSerializer(instance=note, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
     return Response(serializer.data)
 
 @api_view(['DELETE'])
 def deleteNote(request, pk):
-    note = Note.objects.get(id=pk)
+    note = get_object_or_404(Note, id=pk)
     note.delete()
     return Response('Note was deleted!')
 
 @api_view(['POST'])
 def createNote(request):
     data = request.data
-    note = Note.objects.create(
-        body=data['body']
-    )
-    if not data.get('title'):
+    serializer = NoteSerializer(data=data)
+    serializer.is_valid(raise_exception=True)
+    note = serializer.save()
+    if not note.title and note.body:
         result = ai.generate_title_and_tags(note.body)
         if result:
             note.title = result.title
